@@ -15,7 +15,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("2LfiJacHJyjhZG4Ce7SNkrv44vyeZGA1PjnxVAvGERxT");
+declare_id!("2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv");
 
 #[program]
 pub mod meridio {

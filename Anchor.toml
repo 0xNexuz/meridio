@@ -7,7 +7,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-meridio = "2LfiJacHJyjhZG4Ce7SNkrv44vyeZGA1PjnxVAvGERxT"
+meridio = "2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv"
 
 [provider]
 cluster = "localnet"
