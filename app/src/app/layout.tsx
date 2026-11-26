@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <Providers>
           <Header />
-          <main className="mx-auto w-full max-w-3xl flex-1 px-5 pb-8 pt-6">{children}</main>
+          <main className="mx-auto w-full max-w-3xl flex-1 px-5 pb-8 pt-24">{children}</main>
           <footer className="mx-auto w-full max-w-3xl px-5 py-6 text-xs text-muted">
             Running on Solana devnet with test USDC. Nothing here is real money.
           </footer>
