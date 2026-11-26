@@ -22,7 +22,7 @@ function NewCollectionInner() {
 
   const now = new Date();
   const [form, setForm] = useState({
-    title: "BIO 201 textbook",
+    title: "",
     price: "18",
     fee: "0",
     copies: "40",
@@ -98,7 +98,7 @@ function NewCollectionInner() {
       <form onSubmit={submit} className="space-y-4 rounded-lg border border-rule bg-card p-5">
         <label className="block text-sm">
           What are you buying?
-          <input className={field} value={form.title} onChange={set("title")} maxLength={64} required />
+          <input className={field} value={form.title} onChange={set("title")} maxLength={64} required placeholder="e.g. BIO 201 textbook" />
         </label>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">
