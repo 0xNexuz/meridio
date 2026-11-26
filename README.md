@@ -218,6 +218,7 @@ docs/                  screenshots
 - The Solana Pay QR path relies on the student's wallet to show what it is signing; the in-app collect page adds its own check on top.
 - Students need a wallet and USDC. There is no naira on-ramp yet.
 - Wallet addresses are public on chain. Names stay off chain.
+- Each share account is kept on chain after pickup or refund as a public receipt, so its small rent deposit (about 0.0016 SOL, paid by the student) is not returned.
 - Station sign-in has no per-request nonce: a captured sign-in signature could be replayed within its 5-minute window, and only for that one collection's pickup codes.
 
 ## Team
