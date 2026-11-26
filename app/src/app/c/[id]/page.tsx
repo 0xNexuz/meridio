@@ -38,6 +38,8 @@ function when(ts: number) {
   return new Date(ts * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 }
 
+const CHAIN_CLOCK_MARGIN = 60;
+
 function CollectionPageInner() {
   const { id } = useParams<{ id: string }>();
   const { connection } = useConnection();
@@ -58,7 +60,9 @@ function CollectionPageInner() {
   const mine = publicKey ? shares.find((s) => s.buyer.equals(publicKey)) : undefined;
   const isOrganizer = !!publicKey && publicKey.equals(c.organizer);
   const isVendor = !!publicKey && publicKey.equals(c.vendor);
-  const dueRefunds = refundDue(c, now) ? shares.filter((s) => s.status === "paid") : [];
+  // Solana's clock can trail the phone's by up to a minute; offer refunds only once the
+  // chain will certainly accept them.
+  const dueRefunds = refundDue(c, now - CHAIN_CLOCK_MARGIN) ? shares.filter((s) => s.status === "paid") : [];
   const taken = c.paidCount + c.pickedCount;
 
   const run = async (label: string, build: Parameters<typeof send>[1]) => {

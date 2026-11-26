@@ -103,14 +103,14 @@ Enforced by the program and checked by the tests after every step:
 | `close_refused_while_shares_outstanding` | A collection cannot close while money is owed |
 | `rep_can_also_be_the_vendor` | A rep who also sells the item gets price and fee in one account (found in devnet testing, fixed) |
 
-**App server and client (Node test runner): 19 tests**
+**App server and client (Node test runner): 20 tests**
 
 | Area | What it proves |
 | --- | --- |
 | Station sign-in | Only the vendor's wallet can open a pickup station, only for that collection, only within 5 minutes of signing; forged or stretched session tokens fail |
 | Pickup codes | Codes are bound to one collection, expire after 90 seconds, and cannot be extended or altered |
 | Verify before signing | The student's page rebuilds the expected pickup from chain data, compiles it, and requires the exact same bytes as the message the wallet will sign. It refuses an extra transfer, a swapped account, changed data, a changed signer or writable account, or the student as fee payer, including after the transaction's real trip over the wire (a false alarm found in devnet testing, now covered) |
-| Configuration | The server refuses to run a station without both secrets set |
+| Configuration | The server refuses to run a station without both secrets set, reads the station key even from common paste mistakes, and `/api/station` names the missing setting without ever revealing a value |
 | Readable errors | Every transaction is simulated before the wallet sees it, so a failing action shows the program's own reason (e.g. "The pay-by time has passed") instead of a wallet's "Unexpected error" |
 
 ## Verify it yourself
@@ -118,7 +118,7 @@ Enforced by the program and checked by the tests after every step:
 | Check | Command | Expected |
 | --- | --- | --- |
 | Program tests | `cd programs/meridio && cargo test` | `test result: ok. 16 passed; 0 failed` |
-| App tests | `cd app && npm test` | `# pass 19` and `# fail 0` |
+| App tests | `cd app && npm test` | `# pass 20` and `# fail 0` |
 | Lint | `cd app && npm run lint` | no problems reported |
 | Production build | `cd app && npm run build` | route list, no errors |
 | Program on devnet | `solana program show 2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv --url devnet` | program account owned by the BPF loader |
@@ -183,6 +183,8 @@ npm run dev
 
 Open http://localhost:3000, connect a devnet wallet holding test USDC, and start a collection. If you deployed your own program, copy `target/idl/meridio.json` and `target/types/meridio.ts` into `app/src/lib/idl/`.
 
+**Deploy your own (Vercel).** Import the repo, set **Root Directory** to `app`, and add two environment variables: `STATION_SECRET_KEY` (the `[..]` array from `station.json`) and `SESSION_SECRET` (any random 32+ character string). Then open `/api/station` on your deployment: it should return your station's public key, or name the setting that is wrong.
+
 ## Repository layout
 
 ```
@@ -203,7 +205,7 @@ docs/                  screenshots
 | Part | Status |
 | --- | --- |
 | Solana program (8 instructions) | Built; 16 tests pass; deployed to devnet |
-| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 19 tests pass; production build passes. On devnet with a real wallet: create, pay, lock, pickup and refund all done (links above) |
+| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 20 tests pass; production build passes. On devnet with a real wallet: create, pay, lock, pickup and refund all done (links above) |
 | Android: Mobile Wallet Adapter | Registered in code; not yet tested on a device |
 | Hosting | Live on Vercel: [meridio-sol.vercel.app](https://meridio-sol.vercel.app) |
 | Firecrawl price check, ElevenLabs voice updates | Not yet built |

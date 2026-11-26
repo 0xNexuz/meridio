@@ -77,3 +77,23 @@ test("station is not ready without both secrets", () => {
   if (saved === undefined) delete process.env.STATION_SECRET_KEY;
   else process.env.STATION_SECRET_KEY = saved;
 });
+
+test("station key is read from common paste mistakes, and problems are named", () => {
+  const saved = process.env.STATION_SECRET_KEY;
+  const kp = Keypair.generate();
+  const arr = JSON.stringify(Array.from(kp.secretKey));
+  for (const v of [arr, ` ${arr}\n`, `"${arr}"`, `'${arr}'`, `STATION_SECRET_KEY=${arr}`, bs58.encode(kp.secretKey)]) {
+    process.env.STATION_SECRET_KEY = v;
+    assert.equal(station.readStationKey().keypair?.publicKey.toBase58(), kp.publicKey.toBase58(), `failed for ${v.slice(0, 22)}…`);
+  }
+  process.env.STATION_SECRET_KEY = "[1,2,3]";
+  assert.match(station.stationProblem() ?? "", /64/);
+  process.env.STATION_SECRET_KEY = "not a key at all";
+  assert.match(station.stationProblem() ?? "", /could not be read/);
+  delete process.env.STATION_SECRET_KEY;
+  assert.match(station.stationProblem() ?? "", /not set/);
+  const p = station.stationProblem() ?? "";
+  assert.ok(!p.includes(arr), "a problem message must never contain the key");
+  if (saved === undefined) delete process.env.STATION_SECRET_KEY;
+  else process.env.STATION_SECRET_KEY = saved;
+});

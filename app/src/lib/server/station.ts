@@ -10,21 +10,48 @@ import nacl from "tweetnacl";
  * environment variable; in production it would stay on the vendor's own phone.
  */
 export function stationKeypair(): Keypair | null {
+  return readStationKey().keypair;
+}
+
+/**
+ * Reads STATION_SECRET_KEY. Accepts the JSON array written by `solana-keygen`
+ * (`[12,34,...]`) or a base58 secret key, and forgives what people paste by
+ * accident: surrounding quotes, whitespace, or a leading `STATION_SECRET_KEY=`.
+ * Never returns or logs the secret itself.
+ */
+export function readStationKey(): { keypair: Keypair | null; problem: string | null } {
   const raw = process.env.STATION_SECRET_KEY;
-  if (!raw) return null;
+  if (!raw || !raw.trim()) return { keypair: null, problem: "STATION_SECRET_KEY is not set" };
+  let t = raw.trim().replace(/^STATION_SECRET_KEY\s*=\s*/, "").replace(/^['"]|['"]$/g, "").trim();
   try {
-    const t = raw.trim();
-    const bytes = t.startsWith("[") ? Uint8Array.from(JSON.parse(t)) : bs58.decode(t);
-    return Keypair.fromSecretKey(bytes);
+    let bytes: Uint8Array;
+    if (t.includes("[")) {
+      t = t.slice(t.indexOf("["), t.lastIndexOf("]") + 1);
+      bytes = Uint8Array.from(JSON.parse(t));
+    } else {
+      bytes = bs58.decode(t);
+    }
+    if (bytes.length !== 64) {
+      return { keypair: null, problem: `STATION_SECRET_KEY has ${bytes.length} bytes; a Solana secret key has 64` };
+    }
+    return { keypair: Keypair.fromSecretKey(bytes), problem: null };
   } catch {
-    return null;
+    return { keypair: null, problem: "STATION_SECRET_KEY could not be read; paste the whole [..] array from station.json" };
   }
 }
 
 /** True when the server has what it needs to run a pickup station. */
 export function stationReady(): boolean {
+  return stationProblem() === null;
+}
+
+/** Why the station cannot run, or null when it can. Safe to show: names settings, never values. */
+export function stationProblem(): string | null {
+  const key = readStationKey();
+  if (key.problem) return key.problem;
   const s = process.env.SESSION_SECRET;
-  return !!s && s.length >= 16 && stationKeypair() !== null;
+  if (!s || s.length < 16) return "SESSION_SECRET is not set (16+ characters)";
+  return null;
 }
 
 function secret(): string {
