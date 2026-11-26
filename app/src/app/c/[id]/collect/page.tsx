@@ -8,7 +8,8 @@ import { Transaction } from "@solana/web3.js";
 
 import { useCollection } from "@/components/useCollection";
 import { friendlyError } from "@/lib/errors";
-import { explorer, usdc } from "@/lib/meridio";
+import { explorer, pickupInstructions, usdc } from "@/lib/meridio";
+import { pickupTxMismatch } from "@/lib/pickupCheck";
 
 function Collect() {
   const { id } = useParams<{ id: string }>();
@@ -36,6 +37,10 @@ function Collect() {
       const j = await r.json();
       if (!r.ok) throw new Error(j.error ?? "Pickup request failed");
       const tx = Transaction.from(Buffer.from(j.transaction, "base64"));
+      // Never sign blind: rebuild the expected pickup from chain data and compare.
+      if (!c) throw new Error("Collection not loaded yet.");
+      const mismatch = pickupTxMismatch(tx, await pickupInstructions(connection, c, publicKey), c.station);
+      if (mismatch) throw new Error(`Refusing to sign: the server's transaction has an ${mismatch}.`);
       // The station already signed and pays the fee; the wallet adds the student's signature.
       const signed = await signTransaction(tx);
       const sig = await connection.sendRawTransaction(signed.serialize());

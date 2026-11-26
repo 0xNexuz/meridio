@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { Connection, PublicKey } from "@solana/web3.js";
 
 import { RPC_URL, buildPickupTx, fetchCollection, getProgram, sharePda } from "@/lib/meridio";
-import { checkPickupCode, stationKeypair } from "@/lib/server/station";
+import { checkPickupCode, stationKeypair, stationReady } from "@/lib/server/station";
 
 /**
  * Solana Pay transaction request for a pickup.
@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!stationReady()) return fail("Pickup station is not configured on this server.", 503);
   const q = request.nextUrl.searchParams;
   const collectionParam = q.get("collection") ?? "";
   const code = q.get("code") ?? "";

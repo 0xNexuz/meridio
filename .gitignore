@@ -6,3 +6,8 @@ node_modules
 test-ledger
 .yarn
 .surfpool
+
+# keys: never commit
+station.json
+*-keypair.json
+.env.local

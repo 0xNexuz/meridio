@@ -21,6 +21,12 @@ export function stationKeypair(): Keypair | null {
   }
 }
 
+/** True when the server has what it needs to run a pickup station. */
+export function stationReady(): boolean {
+  const s = process.env.SESSION_SECRET;
+  return !!s && s.length >= 16 && stationKeypair() !== null;
+}
+
 function secret(): string {
   const s = process.env.SESSION_SECRET;
   if (!s || s.length < 16) throw new Error("SESSION_SECRET is not set (16+ characters)");

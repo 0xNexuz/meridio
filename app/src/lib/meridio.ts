@@ -150,8 +150,12 @@ function toShare(address: PublicKey, a: any): ShareView {
 
 export async function fetchCollection(connection: Connection, address: PublicKey) {
   const program = getProgram(connection);
-  const a = await program.account.collection.fetchNullable(address);
-  return a ? toCollection(address, a) : null;
+  // Anchor's fetch decodes any account with the right discriminator; it does not check
+  // the owner. Only accounts owned by the Meridio program are real collections.
+  const info = await connection.getAccountInfo(address, "confirmed");
+  if (!info || !info.owner.equals(PROGRAM_ID) || info.data.length === 0) return null;
+  const a = program.coder.accounts.decode("collection", info.data);
+  return toCollection(address, a);
 }
 
 export async function fetchAllCollections(connection: Connection) {
@@ -320,11 +324,12 @@ export async function refundIxs(
  * The pickup transaction. The vendor's station pays the fee and co-signs;
  * the student's wallet adds the second signature.
  */
-export async function buildPickupTx(
+/** The exact instructions of a pickup. Used by the server to build it and by the client to check it. */
+export async function pickupInstructions(
   connection: Connection,
   c: CollectionView,
   buyer: PublicKey,
-): Promise<Transaction> {
+): Promise<TransactionInstruction[]> {
   const vendorToken = ata(c.vendor, c.mint);
   const organizerToken = ata(c.organizer, c.mint);
   const ix = await getProgram(connection)
@@ -341,14 +346,23 @@ export async function buildPickupTx(
       tokenProgram: TOKEN_PROGRAM_ID,
     })
     .instruction();
-  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
-  const tx = new Transaction({ feePayer: c.station, blockhash, lastValidBlockHeight });
-  tx.add(
+  // Token accounts for vendor and organiser are created if missing, paid by the station.
+  return [
     createAssociatedTokenAccountIdempotentInstruction(c.station, vendorToken, c.vendor, c.mint, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID),
     createAssociatedTokenAccountIdempotentInstruction(c.station, organizerToken, c.organizer, c.mint, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID),
     ix,
-  );
-  return tx;
+  ];
+}
+
+/** Pickup transaction with the station as fee payer (students need no SOL). */
+export async function buildPickupTx(
+  connection: Connection,
+  c: CollectionView,
+  buyer: PublicKey,
+): Promise<Transaction> {
+  const ixs = await pickupInstructions(connection, c, buyer);
+  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+  return new Transaction({ feePayer: c.station, blockhash, lastValidBlockHeight }).add(...ixs);
 }
 
 // ---------------------------------------------------------------- formatting

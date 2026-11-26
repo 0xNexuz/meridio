@@ -1,9 +1,8 @@
 import { arcPath, pol, SHARE_COLORS as C } from "./ShareDonut";
 
-// Home-page artwork. Three ideas in one picture:
+// Home-page artwork:
 //  - a ring split into shares (the pot, divided);
-//  - a fan of rays out of it, one per student, coloured by what happened to that share;
-//  - two stippled hands passing a share across.
+//  - a fan of rays out of it, one per student, coloured by what happened to that share.
 // Numbers are an illustrative class of 7 sharing an 84 USDC order, not live data.
 
 const CX = 600;
@@ -42,24 +41,10 @@ const SEGMENTS = [
   { key: "held", from: (4 / 7) * 360, to: 360, color: C.held },
 ];
 
-// The hands file is 3800 wide (1300 of sleeve either side of the 1200 artwork) so the
-// sleeves run off the edge of any screen. Percentages are relative to the 1200 box.
-const HANDS_LEFT = `${(-1300 / 1200) * 100}%`;
-const HANDS_WIDTH = `${(3800 / 1200) * 100}%`;
-
 export function HeroArt({ className }: { className?: string }) {
   return (
-    <div className={`relative ${className ?? ""}`} style={{ clipPath: "inset(0 -100vw 0 -100vw)" }}>
+    <div className={className}>
       <Ring />
-      {/* two stippled hands pass the share across */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/art/hands.svg"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute top-0 h-full max-w-none"
-        style={{ left: HANDS_LEFT, width: HANDS_WIDTH }}
-      />
     </div>
   );
 }
@@ -74,7 +59,7 @@ function Ring() {
       viewBox="0 0 1200 760"
       className="block h-auto w-full"
       role="img"
-      aria-label="Two hands pass a share across a ring that shows a class order split into seven student shares."
+      aria-label="A ring showing a class order split into seven student shares, with one ray per student."
     >
       <defs>
         {(Object.keys(RAY_STOPS) as Ray[]).map((k) => (

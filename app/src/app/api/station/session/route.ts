@@ -1,10 +1,13 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
 import { RPC_URL, fetchCollection } from "@/lib/meridio";
-import { openSession } from "@/lib/server/station";
+import { openSession, stationReady } from "@/lib/server/station";
 
 /** The vendor proves they own the vendor wallet by signing a message. */
 export async function POST(request: Request) {
+  if (!stationReady()) {
+    return Response.json({ error: "Pickup station is not configured on this server." }, { status: 503 });
+  }
   let body: { collection?: string; timestamp?: number; signature?: string };
   try {
     body = await request.json();
