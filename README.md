@@ -80,7 +80,7 @@ Enforced by the program and checked by the tests after every step:
 
 ## Attacks tested
 
-**Program (Rust, LiteSVM): 15 tests**
+**Program (Rust, LiteSVM): 16 tests**
 
 | Test | What it proves |
 | --- | --- |
@@ -99,6 +99,7 @@ Enforced by the program and checked by the tests after every step:
 | `t13_invariant_fuzz` | Random sequences of actions keep every invariant and conserve total tokens |
 | `only_organizer_locks_early_and_cancels` | Early lock and cancel are the organiser's alone |
 | `close_refused_while_shares_outstanding` | A collection cannot close while money is owed |
+| `rep_can_also_be_the_vendor` | A rep who also sells the item gets price and fee in one account (found in devnet testing, fixed) |
 
 **App server and client (Node test runner): 13 tests**
 
@@ -113,7 +114,7 @@ Enforced by the program and checked by the tests after every step:
 
 | Check | Command | Expected |
 | --- | --- | --- |
-| Program tests | `cd programs/meridio && cargo test` | `test result: ok. 15 passed; 0 failed` |
+| Program tests | `cd programs/meridio && cargo test` | `test result: ok. 16 passed; 0 failed` |
 | App tests | `cd app && npm test` | `# pass 13` and `# fail 0` |
 | Lint | `cd app && npm run lint` | no problems reported |
 | Production build | `cd app && npm run build` | route list, no errors |
@@ -125,6 +126,7 @@ Enforced by the program and checked by the tests after every step:
 | --- | --- |
 | Program ID | [`2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv`](https://explorer.solana.com/address/2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv?cluster=devnet) |
 | Deploy transaction | [`5N2UiZci…1qpQHN`](https://explorer.solana.com/tx/5N2UiZcigQquMy9UwPaX6G2bUe78wNkcqH9RG7g9v3fU5MEfqsaPPw2Dd9XofVtvdUVNEPgu5CaT8kWJXU1qpQHN?cluster=devnet) |
+| First collection created from the app | [`4VMAwK9b…tJnB5rZ`](https://explorer.solana.com/tx/4VMAwK9bzF2mtr9DrB7V2AcUBnupS73ujkDeWMREXvoUzyS8SVWBo9H2sz98ue3gBjhpSrwQK8TJmJoaGtJnB5rZ?cluster=devnet) |
 | Test USDC mint | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (Circle devnet USDC, [faucet](https://faucet.circle.com)) |
 
 ## The app
@@ -195,7 +197,7 @@ docs/                  screenshots
 
 | Part | Status |
 | --- | --- |
-| Solana program (8 instructions) | Built; 15 tests pass; deployed to devnet |
+| Solana program (8 instructions) | Built; 16 tests pass; deployed to devnet |
 | Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 13 tests pass; production build passes. End-to-end run against devnet: not yet recorded |
 | Android: Mobile Wallet Adapter | Registered in code; not yet tested on a device |
 | Hosting | Not yet deployed |

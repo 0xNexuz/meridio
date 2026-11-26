@@ -37,8 +37,12 @@ pub struct ConfirmPickup<'info> {
         constraint = vendor_token.owner == collection.vendor,
     )]
     pub vendor_token: Account<'info, TokenAccount>,
+    /// When the course rep is also the vendor, this is the same account as
+    /// `vendor_token`, so it is marked `dup`. The owner check still pins it to the
+    /// organiser, and token balances only change through the token program's CPI.
     #[account(
         mut,
+        dup,
         token::mint = mint,
         constraint = organizer_token.owner == collection.organizer,
     )]

@@ -731,3 +731,36 @@ fn t13_invariant_fuzz() {
     // The fuzz must actually reach both exits, or it proves nothing.
     assert!(total_picked > 0 && total_refunded > 0);
 }
+
+// ---------------------------------------------------------------- rep is also the vendor
+
+/// A course rep who also sells the item (vendor == organiser) must still be able to
+/// complete pickups: one token account receives both price and fee.
+#[test]
+fn rep_can_also_be_the_vendor() {
+    let mut env = setup(2);
+    let mut args = default_args(&env, 8);
+    args.vendor = env.org.pubkey();
+    args.min_buyers = 1;
+    let ix = create_ix(&env, args);
+    let o = env.org.insecure_clone();
+    send(&mut env.svm, &[ix], &o, &[]).unwrap();
+    env.collection = Pubkey::find_program_address(
+        &[COLLECTION_SEED, env.org.pubkey().as_ref(), &8u64.to_le_bytes()],
+        &pid(),
+    )
+    .0;
+    env.vault = Pubkey::find_program_address(&[VAULT_SEED, env.collection.as_ref()], &pid()).0;
+
+    pay(&mut env, 0).unwrap();
+    lock_by_org(&mut env).unwrap();
+    let buyer = env.buyers[0].pubkey();
+    let share = share_pda(&env.collection, &buyer);
+    let ix = pickup_ix(&env, &buyer, &env.station.pubkey(), &share, &env.org_ata, &env.org_ata);
+    let st = env.station.insecure_clone();
+    let b = env.buyers[0].insecure_clone();
+    send(&mut env.svm, &[ix], &st, &[&b]).unwrap();
+    assert_eq!(bal(&env.svm, &env.org_ata), PRICE + FEE);
+    assert_eq!(bal(&env.svm, &env.vault), 0);
+    check_vault_invariant(&env);
+}

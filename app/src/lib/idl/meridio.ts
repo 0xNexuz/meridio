@@ -236,6 +236,11 @@ export type Meridio = {
         },
         {
           "name": "organizerToken",
+          "docs": [
+            "When the course rep is also the vendor, this is the same account as",
+            "`vendor_token`, so it is marked `dup`. The owner check still pins it to the",
+            "organiser, and token balances only change through the token program's CPI."
+          ],
           "writable": true
         },
         {
