@@ -127,6 +127,7 @@ Enforced by the program and checked by the tests after every step:
 | Program ID | [`2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv`](https://explorer.solana.com/address/2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv?cluster=devnet) |
 | Deploy transaction | [`5N2UiZci…1qpQHN`](https://explorer.solana.com/tx/5N2UiZcigQquMy9UwPaX6G2bUe78wNkcqH9RG7g9v3fU5MEfqsaPPw2Dd9XofVtvdUVNEPgu5CaT8kWJXU1qpQHN?cluster=devnet) |
 | First collection created from the app | [`4VMAwK9b…tJnB5rZ`](https://explorer.solana.com/tx/4VMAwK9bzF2mtr9DrB7V2AcUBnupS73ujkDeWMREXvoUzyS8SVWBo9H2sz98ue3gBjhpSrwQK8TJmJoaGtJnB5rZ?cluster=devnet) |
+| First pickup (student + station signed; vendor and rep paid from the vault) | [`5DLuKqLX…Z5q5DWk`](https://explorer.solana.com/tx/5DLuKqLXvnEapB8xx1a9RjqQY37WN6dcqY8hr1aXEQffRKgWDXRXNRUnxUARDUbvKu6gsHbJya2Ws83rYZ5q5DWk?cluster=devnet) |
 | Test USDC mint | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (Circle devnet USDC, [faucet](https://faucet.circle.com)) |
 
 ## The app
@@ -198,7 +199,7 @@ docs/                  screenshots
 | Part | Status |
 | --- | --- |
 | Solana program (8 instructions) | Built; 16 tests pass; deployed to devnet |
-| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 16 tests pass; production build passes. End-to-end run against devnet: not yet recorded |
+| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 16 tests pass; production build passes. On devnet: create, pay, lock and pickup done with a real wallet; refund not yet |
 | Android: Mobile Wallet Adapter | Registered in code; not yet tested on a device |
 | Hosting | Not yet deployed |
 | Firecrawl price check, ElevenLabs voice updates | Not yet built |
