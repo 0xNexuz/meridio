@@ -44,7 +44,12 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ConnectionProvider endpoint={RPC_URL} config={{ commitment: "confirmed" }}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider
+        wallets={wallets}
+        autoConnect
+        // Errors are shown in the page itself; keep them out of the dev error overlay.
+        onError={(e) => console.warn("Wallet:", e.message)}
+      >
         <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

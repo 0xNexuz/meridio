@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { Transaction, type TransactionInstruction } from "@solana/web3.js";
+import { Transaction, VersionedTransaction, type TransactionInstruction } from "@solana/web3.js";
 
 import { friendlyError } from "@/lib/errors";
 
@@ -29,6 +29,17 @@ export function useSend() {
         const list = typeof ixs === "function" ? await ixs() : ixs;
         const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
         const tx = new Transaction({ feePayer: publicKey, blockhash, lastValidBlockHeight }).add(...list);
+        // Dry-run first. Wallets often say only "Unexpected error" when a transaction
+        // would fail; the simulation gives us the program's own reason to show instead.
+        const sim = await connection.simulateTransaction(new VersionedTransaction(tx.compileMessage()), {
+          sigVerify: false,
+          replaceRecentBlockhash: true,
+        });
+        if (sim.value.err) {
+          const err = new Error(JSON.stringify(sim.value.err)) as Error & { logs?: string[] };
+          err.logs = sim.value.logs ?? [];
+          throw err;
+        }
         const signature = await sendTransaction(tx, connection);
         const res = await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
         if (res.value.err) throw new Error(JSON.stringify(res.value.err));

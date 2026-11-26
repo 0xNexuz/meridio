@@ -35,5 +35,8 @@ export function friendlyError(err: unknown): string {
   for (const [needle, message] of Object.entries(MESSAGES)) {
     if (text.includes(needle)) return message;
   }
+  // Any other Anchor error carries a readable message in the logs.
+  const anchor = text.match(/Error Message: ([^\n]+)/);
+  if (anchor) return anchor[1].replace(/\.$/, "") + ".";
   return text.split("\n")[0].slice(0, 200) || "Something went wrong.";
 }
