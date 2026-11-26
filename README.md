@@ -101,13 +101,13 @@ Enforced by the program and checked by the tests after every step:
 | `close_refused_while_shares_outstanding` | A collection cannot close while money is owed |
 | `rep_can_also_be_the_vendor` | A rep who also sells the item gets price and fee in one account (found in devnet testing, fixed) |
 
-**App server and client (Node test runner): 13 tests**
+**App server and client (Node test runner): 16 tests**
 
 | Area | What it proves |
 | --- | --- |
 | Station sign-in | Only the vendor's wallet can open a pickup station, only for that collection, only within 5 minutes of signing; forged or stretched session tokens fail |
 | Pickup codes | Codes are bound to one collection, expire after 90 seconds, and cannot be extended or altered |
-| Verify before signing | The student's page rebuilds the expected pickup from chain data and refuses a server transaction with an extra transfer, a swapped account, changed data, flipped flags, or the student as fee payer |
+| Verify before signing | The student's page rebuilds the expected pickup from chain data, compiles it, and requires the exact same bytes as the message the wallet will sign. It refuses an extra transfer, a swapped account, changed data, a changed signer or writable account, or the student as fee payer, including after the transaction's real trip over the wire (a false alarm found in devnet testing, now covered) |
 | Configuration | The server refuses to run a station without both secrets set |
 
 ## Verify it yourself
@@ -115,7 +115,7 @@ Enforced by the program and checked by the tests after every step:
 | Check | Command | Expected |
 | --- | --- | --- |
 | Program tests | `cd programs/meridio && cargo test` | `test result: ok. 16 passed; 0 failed` |
-| App tests | `cd app && npm test` | `# pass 13` and `# fail 0` |
+| App tests | `cd app && npm test` | `# pass 16` and `# fail 0` |
 | Lint | `cd app && npm run lint` | no problems reported |
 | Production build | `cd app && npm run build` | route list, no errors |
 | Program on devnet | `solana program show 2CY5o9hxJLfmSj8cZfxRKsa8GXJxTFxry5bWfqTfNziv --url devnet` | program account owned by the BPF loader |
@@ -198,7 +198,7 @@ docs/                  screenshots
 | Part | Status |
 | --- | --- |
 | Solana program (8 instructions) | Built; 16 tests pass; deployed to devnet |
-| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 13 tests pass; production build passes. End-to-end run against devnet: not yet recorded |
+| Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 16 tests pass; production build passes. End-to-end run against devnet: not yet recorded |
 | Android: Mobile Wallet Adapter | Registered in code; not yet tested on a device |
 | Hosting | Not yet deployed |
 | Firecrawl price check, ElevenLabs voice updates | Not yet built |
