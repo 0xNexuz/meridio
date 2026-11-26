@@ -4,6 +4,8 @@
 
 Meridio (Greek *μερίδιο*, "a share") is a Solana program and app for class purchases: textbooks, handouts, lab coats, dues. Each student's money sits in a vault that no person can empty. The vendor is paid **one share at a time, only when that student collects**. Whatever is never collected goes back to the student who paid it.
 
+**Live app: [meridio-sol.vercel.app](https://meridio-sol.vercel.app)** (Solana devnet)
+
 ![Meridio home page](docs/home.jpg)
 
 > Built for the **Dev3pack Global Hackathon** (Solana university hackathon, 27–29 Nov 2026). Runs on **Solana devnet** with test USDC. Unaudited.
@@ -203,7 +205,7 @@ docs/                  screenshots
 | Solana program (8 instructions) | Built; 16 tests pass; deployed to devnet |
 | Web app: create, pay, lock, pickup QR, collect, refunds, receipts | Built; 19 tests pass; production build passes. On devnet with a real wallet: create, pay, lock, pickup and refund all done (links above) |
 | Android: Mobile Wallet Adapter | Registered in code; not yet tested on a device |
-| Hosting | Not yet deployed |
+| Hosting | Live on Vercel: [meridio-sol.vercel.app](https://meridio-sol.vercel.app) |
 | Firecrawl price check, ElevenLabs voice updates | Not yet built |
 
 ## Honest limits
